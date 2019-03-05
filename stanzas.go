@@ -124,9 +124,9 @@ func processFile(filename string, in io.Reader, out io.Writer, stdin bool) error
 		return err
 	}
 
-	ast.SortImports(fileSet, file)
-	imps := imports(fileSet, file)
-	var spacesBefore []string // import paths we need spaces before
+	sortImports(fileSet, file)
+	imps := groups(fileSet, file)
+	var spacesBefore []string
 	for _, impSection := range imps {
 		// Within each block of contiguous imports, see if any
 		// import lines are in different group numbers. If so,
@@ -193,8 +193,8 @@ func processFile(filename string, in io.Reader, out io.Writer, stdin bool) error
 	return err
 }
 
-// Imports returns the file imports grouped by paragraph.
-func imports(fset *token.FileSet, f *ast.File) [][]*ast.ImportSpec {
+// groups returns the file imports grouped by paragraph.
+func groups(fset *token.FileSet, f *ast.File) [][]*ast.ImportSpec {
 	var groups [][]*ast.ImportSpec
 
 	for _, decl := range f.Decls {
